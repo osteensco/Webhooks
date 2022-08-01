@@ -48,11 +48,11 @@ class Cookie {
     }
 
     set(field,value,exdays) {
-        if (exdays) {
+        if (exdays != 0) {
             let exp = "expires=" + exdays
-            document.cookie = field + "=" + value + ";" + exp + ";path=/"
+            document.cookie = field + "=" + value + ";" + exp
         } else {//cookie should expire on browser close if not listed
-            document.cookie = field + "=" + value
+            document.cookie = field + "=" + value 
         }
 
     }
@@ -63,15 +63,17 @@ class Cookie {
         let ca = decodedCookie.split(';')
         for (i = 0; i < ca.length; i++) {
             let c = ca[i]
+            
             while (c.charAt(0) == ' ') {
                 c = c.substring(1)
             }
             if (c.indexOf(name) == 0) {
                 return c.substring(name.length, c.length)
             } else {
-                return ""
+                continue
             }
         }
+        return ""
     }
     
     read(type) {
@@ -83,17 +85,62 @@ class Cookie {
         return i
     }
 
+}
 
 
 
+///////////////////Webhook///////////////////////
 
+class Webhook {
+    constructor (data, endpoint){
+        this.payload = data
+        this.endpoint = this.build(endpoint)
+        this.send(data, this.endpoint)
+    }
+
+    build (endpoint) {
+        let ep = document.getElementById(endpoint)
+        let url = ep.value
+        ep.remove()
+        return url
+    }
+
+    send (data, endpointURL) {
+        const request = new XMLHttpRequest()
+        request.open("POST", endpointURL)
+  
+        request.setRequestHeader('Content-type', 'application/json')
+  
+        request.send(JSON.stringify(data))
+
+    }
 
 
 
 }
 
 
-let id = Cookie('id')
-let session = Cookie('sessionID')
 
-console.log('Success')
+
+
+///////////////scripts/////////////////
+
+let id = new Cookie('id')
+let session = new Cookie('sessionID')
+
+
+let discord = new Webhook(
+    {
+        username: "Scott's Portfolio Site Traffic",
+        content: `______
+
+    ${id.value} 
+    ${session.value}    
+        Visited: ${document.location.href}
+        ${id.datetime}
+
+    ______`
+    },
+    "discord_endpoint"
+)
+
