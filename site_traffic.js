@@ -144,3 +144,20 @@ let discord = new Webhook(
     "discord_endpoint"
 )
 
+let gcp = new Webhook(
+    {
+        TS: id.datetime,
+        id: id.value,
+        session: session.value,
+        path: document.location.href,
+        referrer: document.referrer,
+        device: navigator.userAgent,
+        language: navigator.language
+
+    },
+    "gcp_endpoint"
+)
+
+
+
+
