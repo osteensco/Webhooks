@@ -3,13 +3,13 @@ const functions = require('@google-cloud/functions-framework')
 // Register an HTTP function with the Functions Framework
 functions.http('myHttpFunction', (req, res) => {
 
-    // const topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID'
+    const topicNameOrId = 'projects/portfolio-project-353016/topics/portfoliowebsite'
     const data = JSON.stringify(req)
 
     // Imports the Google Cloud client library
     const {PubSub} = require('@google-cloud/pubsub')
 
-    // Creates a client; cache this for further use
+    // Creates a client
     const pubSubClient = new PubSub()
 
     async function publishMessage() {
