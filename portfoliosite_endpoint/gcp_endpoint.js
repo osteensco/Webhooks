@@ -1,7 +1,7 @@
 const functions = require('@google-cloud/functions-framework')
 
 // Register an HTTP function with the Functions Framework
-functions.http('myHttpFunction', (req, res) => {
+functions.http('endpoint', (req, res) => {
 
     const topicNameOrId = 'projects/portfolio-project-353016/topics/portfoliowebsite'
     const data = JSON.stringify(req)
