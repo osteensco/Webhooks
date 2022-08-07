@@ -32,3 +32,4 @@ functions.http('endpoint', (req, res) => {
     // Send an HTTP response
     res.send('OK')
 })
+
