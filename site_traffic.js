@@ -110,7 +110,7 @@ class Webhook {
         request.open("POST", endpointURL)
   
         request.setRequestHeader('Content-type', 'application/json')
-  
+
         request.send(JSON.stringify(data))
 
     }
@@ -146,18 +146,13 @@ let discord = new Webhook(
 
 let gcp = new Webhook(
     {
-        TS: id.datetime,
-        id: id.value,
-        session: session.value,
-        path: document.location.href,
-        referrer: document.referrer,
-        device: navigator.userAgent,
-        language: navigator.language
-
+        TimeStamp: [id.datetime],
+        ID: [id.value],
+        Session: [session.value],
+        Page: [document.location.href],
+        Referrer: [document.referrer],
+        Device: [navigator.userAgent],
+        Language: [navigator.language]
     },
     "gcp_endpoint"
 )
-
-
-
-
