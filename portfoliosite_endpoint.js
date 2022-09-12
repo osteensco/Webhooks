@@ -39,7 +39,7 @@ functions.http('portfoliosite_endpoint', (req, res) => {
                 .publishMessage({data: dataBuffer})
                 console.log(`Message ${messageId} published. payload: ${payload}`)
             } catch (error) {
-                console.error(`Received error while publishing: ${error.message}`)
+                console.error(`Received error while publishing: ${error.message} payload: ${payload}`)
                 process.exitCode = 1
             }
             
