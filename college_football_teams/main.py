@@ -11,7 +11,7 @@ def power5teamsAPI(request):
     client = bigquery.Client()
 
     TABLE_PATH = os.environ.get('TABLE_PATH')
-
+    
     conf = request.args.get('conference', default=None, type=str).lower()
 
     if conf == 'all':
@@ -22,7 +22,7 @@ def power5teamsAPI(request):
         query = f"""
             SELECT *
             FROM {TABLE_PATH}
-            WHERE LOWER(GameID) = @conference
+            WHERE LOWER(Conference) = @conference
         """
 
     job_config = bigquery.QueryJobConfig(
