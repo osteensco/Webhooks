@@ -16,11 +16,16 @@ def power5teamsAPI(request):
 
     if conf == 'all':
         query = f"""
-            SELECT * FROM {TABLE_PATH}
+            SELECT 
+                Conference, 
+                Team 
+            FROM {TABLE_PATH}
         """
     else:
         query = f"""
-            SELECT *
+            SELECT 
+                Conference, 
+                Team
             FROM {TABLE_PATH}
             WHERE LOWER(Conference) = @conference
         """
