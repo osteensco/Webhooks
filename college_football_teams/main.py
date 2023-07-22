@@ -6,7 +6,7 @@ import os
 
 
 
-def main(request):
+def power5teamsAPI(request):
 
     client = bigquery.Client()
 
