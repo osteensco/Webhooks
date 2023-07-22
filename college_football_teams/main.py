@@ -12,9 +12,9 @@ def power5teamsAPI(request):
 
     TABLE_PATH = os.environ.get('TABLE_PATH')
 
-    conference = request.args.get('conference', default=None, type=str).lower()
+    conf = request.args.get('conference', default=None, type=str).lower()
 
-    if conference == 'all':
+    if conf == 'all':
         query = f"""
             SELECT * FROM {TABLE_PATH}
         """
@@ -25,7 +25,13 @@ def power5teamsAPI(request):
             WHERE LOWER(GameID) = @conference
         """
 
-    query_job = client.query(query, conference=conference)
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("conference", "STRING", conf)
+        ]
+    )
+
+    query_job = client.query(query, job_config=job_config)
     results = query_job.result()
 
     data = [dict(row) for row in results]
