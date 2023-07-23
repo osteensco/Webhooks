@@ -8,6 +8,9 @@ import os
 
 def power5teamsAPI(request):
 
+    if request.method != 'GET':
+        return {"error": "Method Not Allowed"}, 405
+    
     client = bigquery.Client()
 
     TABLE_PATH = os.environ.get('TABLE_PATH')
@@ -21,6 +24,13 @@ def power5teamsAPI(request):
                 Team 
             FROM {TABLE_PATH}
         """
+    elif conf == 'conferences':
+        query = f"""
+            SELECT 
+                DISTINCT
+                Conference
+            FROM {TABLE_PATH}
+        """        
     else:
         query = f"""
             SELECT 
