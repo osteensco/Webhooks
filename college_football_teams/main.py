@@ -20,7 +20,7 @@ def power5teamsAPI(request):
     )
     table_name = 'pwr_5_teams'
 
-    conf = request.args.get('conference', default=None, type=str).lower()
+    conf = request.args.get('conference', default=None, type=str)
 
     try:
         table = dynamodb.Table(table_name)
@@ -28,7 +28,20 @@ def power5teamsAPI(request):
         if conf == 'all':
             response = table.scan()
         elif conf == 'conferences':
+
             response = table.scan(ProjectionExpression="Conference")
+            
+            included_dict = {}
+            unique_values = []
+            
+            for item in response['Items']:
+                item_key = tuple(item.items())
+                if item_key not in included_dict:
+                    included_dict[item_key] = True
+                    unique_values.append(item)
+
+            response['Items'] = unique_values
+
         else:
             response = table.query(
                 KeyConditionExpression=boto3.dynamodb.conditions.Key('Conference').eq(conf)
@@ -36,9 +49,11 @@ def power5teamsAPI(request):
 
         data = response['Items']
 
+        return json.dumps(data)
+
     except ClientError as e:
         return {"error": "An error occurred while accessing DynamoDB"}, 500
 
-    return json.dumps(data)
+
 
 
