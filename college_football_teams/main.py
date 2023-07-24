@@ -1,55 +1,42 @@
-from google.cloud import bigquery
 import json
+import boto3
+from botocore.exceptions import ClientError
 import os
 
 
 
 
 
-def power5teamsAPI(request):
 
+def power5teamsAPI(request):
     if request.method != 'GET':
         return {"error": "Method Not Allowed"}, 405
-    
-    client = bigquery.Client()
 
-    TABLE_PATH = os.environ.get('TABLE_PATH')
-    
+    dynamodb = boto3.resource(
+        'dynamodb',
+        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
+    )
+    table_name = 'pwr_5_teams'
+
     conf = request.args.get('conference', default=None, type=str).lower()
 
-    if conf == 'all':
-        query = f"""
-            SELECT 
-                Conference, 
-                Team 
-            FROM {TABLE_PATH}
-        """
-    elif conf == 'conferences':
-        query = f"""
-            SELECT 
-                DISTINCT
-                Conference
-            FROM {TABLE_PATH}
-        """        
-    else:
-        query = f"""
-            SELECT 
-                Conference, 
-                Team
-            FROM {TABLE_PATH}
-            WHERE LOWER(Conference) = @conference
-        """
+    try:
+        table = dynamodb.Table(table_name)
 
-    job_config = bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("conference", "STRING", conf)
-        ]
-    )
+        if conf == 'all':
+            response = table.scan()
+        elif conf == 'conferences':
+            response = table.scan(ProjectionExpression="Conference")
+        else:
+            response = table.query(
+                KeyConditionExpression=boto3.dynamodb.conditions.Key('Conference').eq(conf)
+            )
 
-    query_job = client.query(query, job_config=job_config)
-    results = query_job.result()
+        data = response['Items']
 
-    data = [dict(row) for row in results]
+    except ClientError as e:
+        return {"error": "An error occurred while accessing DynamoDB"}, 500
 
     return json.dumps(data)
 
